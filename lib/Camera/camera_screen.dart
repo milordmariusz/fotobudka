@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fotobudka/Camera/capture_button.dart';
+import 'package:fotobudka/Camera/countdown_preview.dart';
 import 'package:fotobudka/Camera/settings_button.dart';
 import 'package:fotobudka/Camera/settings_preview.dart';
 import 'package:fotobudka/Camera/top_image_viewer.dart';
@@ -17,6 +18,7 @@ class CameraScreen extends StatelessWidget {
         TopImageViewer(),
         SettingsButton(),
         SettingsPreview(),
+        CountdownPreview()
       ],
     );
   }

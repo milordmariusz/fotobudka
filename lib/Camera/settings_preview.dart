@@ -7,30 +7,33 @@ class SettingsPreview extends GetView<ScanController> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 30,
-      right: 35,
-      child: Container(
-          height: 80,
-          width: 80,
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Obx(() => Text('${controller.photoNumber.value}x',
-                    style: DefaultTextStyle.of(context).style.apply(
-                        fontSizeFactor: 0.5,
-                        color: Colors.white,
-                        decoration: TextDecoration.none))),
-                Obx(() => Text('${controller.delayTime.value}s',
-                    style: DefaultTextStyle.of(context).style.apply(
-                        fontSizeFactor: 0.5,
-                        color: Colors.white,
-                        decoration: TextDecoration.none))),
-              ],
-            ),
-          )),
-    );
+    return Obx(() =>Visibility(
+      visible: !controller.isTakingPhoto.value,
+      child: Positioned(
+        bottom: 30,
+        right: 35,
+        child: Container(
+            height: 80,
+            width: 80,
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Obx(() => Text('${controller.photoNumber.value}x',
+                      style: DefaultTextStyle.of(context).style.apply(
+                          fontSizeFactor: 0.5,
+                          color: Colors.white,
+                          decoration: TextDecoration.none))),
+                  Obx(() => Text('${controller.delayTime.value}s',
+                      style: DefaultTextStyle.of(context).style.apply(
+                          fontSizeFactor: 0.5,
+                          color: Colors.white,
+                          decoration: TextDecoration.none))),
+                ],
+              ),
+            )),
+      ),
+    ));
   }
 }

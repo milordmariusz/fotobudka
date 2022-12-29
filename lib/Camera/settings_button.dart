@@ -8,24 +8,27 @@ class SettingsButton extends GetView<ScanController> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-        bottom: 45,
-        left: 50,
-        child: GestureDetector(
-          onTap: () => _ShowSettingsViewer(context),
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: const BoxDecoration(
-                color: Colors.white, shape: BoxShape.circle),
-            child: const Center(
-              child: Icon(
-                Icons.settings,
-                size: 40,
+    return Obx(() => Visibility(
+      visible: !controller.isTakingPhoto.value,
+      child: Positioned(
+          bottom: 45,
+          left: 50,
+          child: GestureDetector(
+            onTap: () => _ShowSettingsViewer(context),
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: const BoxDecoration(
+                  color: Colors.white, shape: BoxShape.circle),
+              child: const Center(
+                child: Icon(
+                  Icons.settings,
+                  size: 40,
+                ),
               ),
             ),
-          ),
-        ));
+          )),
+    ));
   }
 
   void _ShowSettingsViewer(context) {

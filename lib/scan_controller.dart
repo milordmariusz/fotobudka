@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
@@ -12,7 +13,9 @@ class ScanController extends GetxController {
   final RxList<Uint8List> _imageList = RxList([]);
 
   CameraController get cameraController => _cameraController;
+
   bool get isInitialized => _isInitialized.value;
+
   List<Uint8List> get imageList => _imageList;
 
   @override
@@ -53,16 +56,45 @@ class ScanController extends GetxController {
 
   void capture() {
     if (_cameraImage != null) {
-      img.Image image = img.Image.fromBytes(_cameraImage!.width,
-          _cameraImage!.height, _cameraImage!.planes[0].bytes,
-          format: img.Format.bgra);
-      Uint8List list = Uint8List.fromList(img.encodeJpg(image));
-      _imageList.add(list);
-      _imageList.refresh();
+      currentPhotoNumber.value = photoNumber.value;
+      captureFirstStage();
     }
   }
 
+  void captureFirstStage() {
+    currentDelayTime.value = delayTime.value;
+    isTakingPhoto.value = true;
+    captureSecondStage();
+  }
+
+  void captureSecondStage() {
+    Timer(Duration(seconds: 1), () {
+      if (currentDelayTime.value != 0) {
+        captureSecondStage();
+        currentDelayTime.value -= 1;
+      } else {
+        img.Image image = img.Image.fromBytes(_cameraImage!.width,
+            _cameraImage!.height, _cameraImage!.planes[0].bytes,
+            format: img.Format.bgra);
+        Uint8List list = Uint8List.fromList(img.encodeJpg(image));
+        _imageList.add(list);
+        _imageList.refresh();
+        currentPhotoNumber.value -= 1;
+        if (currentPhotoNumber.value > 0) {
+          Timer(Duration(seconds: 1), () {
+            captureFirstStage();
+          });
+        } else {
+          isTakingPhoto.value = false;
+        }
+      }
+    });
+  }
+
   var photoNumber = 4.obs;
+  var currentPhotoNumber = 0.obs;
   var delayTime = 5.obs;
   var selectedIndex = 0.obs;
+  var currentDelayTime = 0.obs;
+  var isTakingPhoto = false.obs;
 }
