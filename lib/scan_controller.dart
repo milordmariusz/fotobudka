@@ -63,4 +63,8 @@ class ScanController extends GetxController {
       _imageList.refresh();
     }
   }
+
+  void showSettings() {
+    return;
+  }
 }
