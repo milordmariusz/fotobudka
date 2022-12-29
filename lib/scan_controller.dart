@@ -12,9 +12,7 @@ class ScanController extends GetxController {
   final RxList<Uint8List> _imageList = RxList([]);
 
   CameraController get cameraController => _cameraController;
-
   bool get isInitialized => _isInitialized.value;
-
   List<Uint8List> get imageList => _imageList;
 
   @override
@@ -64,7 +62,7 @@ class ScanController extends GetxController {
     }
   }
 
-  void showSettings() {
-    return;
-  }
+  var photoNumber = 4.obs;
+  var delayTime = 5.obs;
+  var selectedIndex = 0.obs;
 }

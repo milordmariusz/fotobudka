@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 class SettingsPreview extends GetView<ScanController> {
   const SettingsPreview({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -19,16 +18,16 @@ class SettingsPreview extends GetView<ScanController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text('1x',
+                Obx(() => Text('${controller.photoNumber.value}x',
                     style: DefaultTextStyle.of(context).style.apply(
                         fontSizeFactor: 0.5,
                         color: Colors.white,
-                        decoration: TextDecoration.none)),
-                Text('1s',
+                        decoration: TextDecoration.none))),
+                Obx(() => Text('${controller.delayTime.value}s',
                     style: DefaultTextStyle.of(context).style.apply(
                         fontSizeFactor: 0.5,
                         color: Colors.white,
-                        decoration: TextDecoration.none)),
+                        decoration: TextDecoration.none))),
               ],
             ),
           )),
