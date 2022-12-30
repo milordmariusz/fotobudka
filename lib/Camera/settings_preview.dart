@@ -7,12 +7,13 @@ class SettingsPreview extends GetView<ScanController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() =>Visibility(
-      visible: !controller.isTakingPhoto.value,
-      child: Positioned(
-        bottom: 30,
-        right: 35,
-        child: Container(
+    return Obx(
+      () => Visibility(
+        visible: !controller.isTakingPhoto.value,
+        child: Positioned(
+          bottom: 30,
+          right: 35,
+          child: Container(
             height: 80,
             width: 80,
             child: Center(
@@ -20,20 +21,30 @@ class SettingsPreview extends GetView<ScanController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Obx(() => Text('${controller.photoNumber.value}x',
+                  Obx(
+                    () => Text(
+                      '${controller.photoNumber.value}x',
                       style: DefaultTextStyle.of(context).style.apply(
                           fontSizeFactor: 0.5,
                           color: Colors.white,
-                          decoration: TextDecoration.none))),
-                  Obx(() => Text('${controller.delayTime.value}s',
+                          decoration: TextDecoration.none),
+                    ),
+                  ),
+                  Obx(
+                    () => Text(
+                      '${controller.delayTime.value}s',
                       style: DefaultTextStyle.of(context).style.apply(
                           fontSizeFactor: 0.5,
                           color: Colors.white,
-                          decoration: TextDecoration.none))),
+                          decoration: TextDecoration.none),
+                    ),
+                  ),
                 ],
               ),
-            )),
+            ),
+          ),
+        ),
       ),
-    ));
+    );
   }
 }

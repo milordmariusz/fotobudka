@@ -9,11 +9,19 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 
 class ScanController extends GetxController {
+  final TextEditingController banerTextController = TextEditingController();
+  final AudioPlayer player = AudioPlayer();
+  final RxBool _isInitialized = RxBool(false);
+  final RxList<Uint8List> _imageList = RxList([]);
   late List<CameraDescription> _cameras;
   late CameraController _cameraController;
-  final RxBool _isInitialized = RxBool(false);
   CameraImage? _cameraImage;
-  final RxList<Uint8List> _imageList = RxList([]);
+  var currentPhotoNumber = 0;
+  var photoNumber = 4.obs;
+  var delayTime = 5.obs;
+  var selectedIndex = 0.obs;
+  var currentDelayTime = 0.obs;
+  var isTakingPhoto = false.obs;
 
   CameraController get cameraController => _cameraController;
 
@@ -59,7 +67,7 @@ class ScanController extends GetxController {
 
   void capture() {
     if (_cameraImage != null) {
-      currentPhotoNumber.value = photoNumber.value;
+      currentPhotoNumber = photoNumber.value;
       captureFirstStage();
     }
   }
@@ -73,7 +81,6 @@ class ScanController extends GetxController {
 
   void captureSecondStage() {
     Timer(Duration(seconds: 1), () {
-
       if (currentDelayTime.value != 0) {
         PlaySound('assets/pop.mp3');
         captureSecondStage();
@@ -85,41 +92,33 @@ class ScanController extends GetxController {
         Uint8List list = Uint8List.fromList(img.encodeJpg(image));
         _imageList.add(list);
         _imageList.refresh();
-        currentPhotoNumber.value -= 1;
-        if (currentPhotoNumber.value > 0) {
+        currentPhotoNumber -= 1;
+        if (currentPhotoNumber > 0) {
           PlaySound('assets/longpop.wav');
           Timer(Duration(seconds: 1), () {
+            //ZROBIENIE 1 ZDJECIA
             captureFirstStage();
           });
         } else {
+          //KONIEC WSZYSTKICH ZDJEC
           isTakingPhoto.value = false;
           PlaySound('assets/finishpop.wav');
         }
       }
     });
   }
-  final TextEditingController banerTextController = TextEditingController();
-  var photoNumber = 4.obs;
-  var currentPhotoNumber = 0.obs;
-  var delayTime = 5.obs;
-  var selectedIndex = 0.obs;
-  var currentDelayTime = 0.obs;
-  var isTakingPhoto = false.obs;
-
-
-  AudioPlayer player = AudioPlayer();
 
   Future<void> PlaySound(string) async {
     String audioasset = string;
     ByteData bytes = await rootBundle.load(audioasset); //load sound from assets
-    Uint8List  soundbytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+    Uint8List soundbytes =
+        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
     int result = await player.playBytes(soundbytes);
-    if(result == 1){ //play success
+    if (result == 1) {
+      //play success
       print("Sound playing successful.");
-    }else{
+    } else {
       print("Error while playing sound.");
     }
   }
-
-
 }

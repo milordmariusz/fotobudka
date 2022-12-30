@@ -7,9 +7,10 @@ class CaptureButton extends GetView<ScanController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Visibility(
-      visible: !controller.isTakingPhoto.value,
-      child: Positioned(
+    return Obx(
+      () => Visibility(
+        visible: !controller.isTakingPhoto.value,
+        child: Positioned(
           bottom: 30,
           child: GestureDetector(
             onTap: () => controller.capture(),
@@ -31,7 +32,9 @@ class CaptureButton extends GetView<ScanController> {
                 ),
               ),
             ),
-          )),
-    ));
+          ),
+        ),
+      ),
+    );
   }
 }

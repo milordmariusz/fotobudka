@@ -29,7 +29,7 @@ class SettingsViewer extends GetView<ScanController> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                  )
+                  ),
                 ],
               ),
               Row(children: const <Widget>[SizedBox(height: 10)]),
@@ -39,23 +39,25 @@ class SettingsViewer extends GetView<ScanController> {
                   Text(
                     'Ilosc zdjęć',
                     style: TextStyle(fontSize: 30),
-                  )
+                  ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Obx(() => NumberPicker(
-                        minValue: 2,
-                        maxValue: 8,
-                        value: controller.photoNumber.value,
-                        onChanged: (value) {
-                          controller.photoNumber.value = value;
-                        },
-                        selectedTextStyle: const TextStyle(
-                            fontSize: 30, color: Colors.deepPurpleAccent),
-                        axis: Axis.horizontal,
-                      )),
+                  Obx(
+                    () => NumberPicker(
+                      minValue: 2,
+                      maxValue: 8,
+                      value: controller.photoNumber.value,
+                      onChanged: (value) {
+                        controller.photoNumber.value = value;
+                      },
+                      selectedTextStyle: const TextStyle(
+                          fontSize: 30, color: Colors.deepPurpleAccent),
+                      axis: Axis.horizontal,
+                    ),
+                  ),
                 ],
               ),
               Row(children: const <Widget>[SizedBox(height: 10)]),
@@ -65,7 +67,7 @@ class SettingsViewer extends GetView<ScanController> {
                   Text(
                     'Czas pomiędzy zdjęciami',
                     style: TextStyle(fontSize: 30),
-                  )
+                  ),
                 ],
               ),
               Row(
@@ -113,9 +115,12 @@ class SettingsViewer extends GetView<ScanController> {
                     return const SizedBox(width: 12);
                   },
                   itemBuilder: (context, index) {
-                    return Obx(() => InkWell(
+                    return Obx(
+                      () => InkWell(
                         onTap: () => {controller.selectedIndex.value = index},
-                        child: buildCard(index)));
+                        child: buildCard(index),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -128,9 +133,10 @@ class SettingsViewer extends GetView<ScanController> {
 
   Widget buildCard(int index) => Container(
         decoration: BoxDecoration(
-            border: Border.all(
-                width: controller.selectedIndex.value == index ? 10 : 0,
-                color: Colors.deepPurpleAccent)),
+          border: Border.all(
+              width: controller.selectedIndex.value == index ? 10 : 0,
+              color: Colors.deepPurpleAccent),
+        ),
         width: 128,
         height: 256,
         margin: const EdgeInsets.only(right: 10, left: 10),
@@ -144,9 +150,15 @@ class SettingsViewer extends GetView<ScanController> {
             ),
             Center(
               child: RotatedBox(
-                  quarterTurns: 1,
-                  child: Text(controller.banerTextController.text,
-                    style: TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold ),)),
+                quarterTurns: 1,
+                child: Text(
+                  controller.banerTextController.text,
+                  style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),

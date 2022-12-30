@@ -8,15 +8,17 @@ class CameraViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetX<ScanController>(builder: (controller) {
-      if (!controller.isInitialized) {
-        return Container();
-      }
-      return SizedBox(
-        height: Get.height,
-        width: Get.width,
-        child: CameraPreview(controller.cameraController),
-      );
-    });
+    return GetX<ScanController>(
+      builder: (controller) {
+        if (!controller.isInitialized) {
+          return Container();
+        }
+        return SizedBox(
+          height: Get.height,
+          width: Get.width,
+          child: CameraPreview(controller.cameraController),
+        );
+      },
+    );
   }
 }

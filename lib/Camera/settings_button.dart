@@ -8,9 +8,10 @@ class SettingsButton extends GetView<ScanController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Visibility(
-      visible: !controller.isTakingPhoto.value,
-      child: Positioned(
+    return Obx(
+      () => Visibility(
+        visible: !controller.isTakingPhoto.value,
+        child: Positioned(
           bottom: 45,
           left: 50,
           child: GestureDetector(
@@ -27,8 +28,10 @@ class SettingsButton extends GetView<ScanController> {
                 ),
               ),
             ),
-          )),
-    ));
+          ),
+        ),
+      ),
+    );
   }
 
   void _ShowSettingsViewer(context) {
