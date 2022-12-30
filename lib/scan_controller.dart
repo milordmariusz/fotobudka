@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 
@@ -65,11 +68,14 @@ class ScanController extends GetxController {
     currentDelayTime.value = delayTime.value;
     isTakingPhoto.value = true;
     captureSecondStage();
+    PlaySound('assets/pop.mp3');
   }
 
   void captureSecondStage() {
     Timer(Duration(seconds: 1), () {
+
       if (currentDelayTime.value != 0) {
+        PlaySound('assets/pop.mp3');
         captureSecondStage();
         currentDelayTime.value -= 1;
       } else {
@@ -81,20 +87,39 @@ class ScanController extends GetxController {
         _imageList.refresh();
         currentPhotoNumber.value -= 1;
         if (currentPhotoNumber.value > 0) {
+          PlaySound('assets/longpop.wav');
           Timer(Duration(seconds: 1), () {
             captureFirstStage();
           });
         } else {
           isTakingPhoto.value = false;
+          PlaySound('assets/finishpop.wav');
         }
       }
     });
   }
-
+  final TextEditingController banerTextController = TextEditingController();
   var photoNumber = 4.obs;
   var currentPhotoNumber = 0.obs;
   var delayTime = 5.obs;
   var selectedIndex = 0.obs;
   var currentDelayTime = 0.obs;
   var isTakingPhoto = false.obs;
+
+
+  AudioPlayer player = AudioPlayer();
+
+  Future<void> PlaySound(string) async {
+    String audioasset = string;
+    ByteData bytes = await rootBundle.load(audioasset); //load sound from assets
+    Uint8List  soundbytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+    int result = await player.playBytes(soundbytes);
+    if(result == 1){ //play success
+      print("Sound playing successful.");
+    }else{
+      print("Error while playing sound.");
+    }
+  }
+
+
 }

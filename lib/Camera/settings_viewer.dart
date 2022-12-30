@@ -96,6 +96,8 @@ class SettingsViewer extends GetView<ScanController> {
               ),
               Row(children: const <Widget>[SizedBox(height: 00)]),
               TextFormField(
+                maxLength: 26,
+                controller: controller.banerTextController,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'Wpisz tekst na banerze',
@@ -106,7 +108,7 @@ class SettingsViewer extends GetView<ScanController> {
                 height: 256,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 6,
+                  itemCount: 7,
                   separatorBuilder: (context, index) {
                     return const SizedBox(width: 12);
                   },
@@ -132,11 +134,21 @@ class SettingsViewer extends GetView<ScanController> {
         width: 128,
         height: 256,
         margin: const EdgeInsets.only(right: 10, left: 10),
-        child: Positioned.fill(
-          child: Image.asset(
-            'assets/baner${index}.png',
-            repeat: ImageRepeat.repeat,
-          ),
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(
+              child: Image.asset(
+                'assets/baner${index}.png',
+                repeat: ImageRepeat.repeat,
+              ),
+            ),
+            Center(
+              child: RotatedBox(
+                  quarterTurns: 1,
+                  child: Text(controller.banerTextController.text,
+                    style: TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold ),)),
+            ),
+          ],
         ),
       );
 }
