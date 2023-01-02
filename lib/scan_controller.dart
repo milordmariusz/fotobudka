@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fotobudka/models/data.dart';
+import 'package:fotobudka/services/photo_service.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 
@@ -13,6 +16,7 @@ class ScanController extends GetxController {
   final AudioPlayer player = AudioPlayer();
   final RxBool _isInitialized = RxBool(false);
   final RxList<Uint8List> _imageList = RxList([]);
+  final PhotoService _photoService = PhotoService();
   late List<CameraDescription> _cameras;
   late CameraController _cameraController;
   CameraImage? _cameraImage;
@@ -76,13 +80,13 @@ class ScanController extends GetxController {
     currentDelayTime.value = delayTime.value;
     isTakingPhoto.value = true;
     captureSecondStage();
-    PlaySound('assets/pop.mp3');
+    // PlaySound('assets/pop.mp3');
   }
 
   void captureSecondStage() {
     Timer(Duration(seconds: 1), () {
       if (currentDelayTime.value != 0) {
-        PlaySound('assets/pop.mp3');
+        // PlaySound('assets/pop.mp3');
         captureSecondStage();
         currentDelayTime.value -= 1;
       } else {
@@ -91,10 +95,15 @@ class ScanController extends GetxController {
             format: img.Format.bgra);
         Uint8List list = Uint8List.fromList(img.encodeJpg(image));
         _imageList.add(list);
+        var data = Data(base64Encode(list), null, null);
+        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        print(data.toString());
+        print(data.photo);
+        _photoService.sendPhoto(data);
         _imageList.refresh();
         currentPhotoNumber -= 1;
         if (currentPhotoNumber > 0) {
-          PlaySound('assets/longpop.wav');
+          // PlaySound('assets/longpop.wav');
           Timer(Duration(seconds: 1), () {
             //ZROBIENIE 1 ZDJECIA
             captureFirstStage();
@@ -102,7 +111,7 @@ class ScanController extends GetxController {
         } else {
           //KONIEC WSZYSTKICH ZDJEC
           isTakingPhoto.value = false;
-          PlaySound('assets/finishpop.wav');
+          // PlaySound('assets/finishpop.wav');
         }
       }
     });

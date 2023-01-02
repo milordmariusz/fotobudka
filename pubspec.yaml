@@ -41,6 +41,8 @@ dependencies:
   camera: ^0.9.8+1
   image: ^3.2.0
   audioplayers: ^0.20.1
+  http:
+  intl:
 
 dev_dependencies:
   flutter_test:
