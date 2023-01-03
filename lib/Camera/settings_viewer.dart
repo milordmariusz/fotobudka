@@ -110,7 +110,7 @@ class SettingsViewer extends GetView<ScanController> {
                 height: 256,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 7,
+                  itemCount: 5,
                   separatorBuilder: (context, index) {
                     return const SizedBox(width: 12);
                   },
@@ -144,7 +144,7 @@ class SettingsViewer extends GetView<ScanController> {
           children: <Widget>[
             Positioned.fill(
               child: Image.asset(
-                'assets/baner${index}.png',
+                'assets/baner${index}.jpg',
                 repeat: ImageRepeat.repeat,
               ),
             ),
