@@ -37,11 +37,14 @@ class TopImageViewer extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(3),
                     child: RepaintBoundary(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: MemoryImage(controller.imageList[index]),
+                      child: RotatedBox(
+                        quarterTurns: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: MemoryImage(controller.imageList[index]),
+                            ),
                           ),
                         ),
                       ),
