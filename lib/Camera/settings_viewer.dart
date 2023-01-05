@@ -52,6 +52,7 @@ class SettingsViewer extends GetView<ScanController> {
                       value: controller.photoNumber.value,
                       onChanged: (value) {
                         controller.photoNumber.value = value;
+                        controller.updateDatabase();
                       },
                       selectedTextStyle: const TextStyle(
                           fontSize: 30, color: Colors.deepPurpleAccent),
@@ -79,6 +80,7 @@ class SettingsViewer extends GetView<ScanController> {
                         value: controller.delayTime.value,
                         onChanged: (value) {
                           controller.delayTime.value = value;
+                          controller.updateDatabase();
                         },
                         selectedTextStyle: const TextStyle(
                             fontSize: 30, color: Colors.deepPurpleAccent),
@@ -98,6 +100,9 @@ class SettingsViewer extends GetView<ScanController> {
               ),
               Row(children: const <Widget>[SizedBox(height: 00)]),
               TextFormField(
+                onChanged: (value) {
+                  controller.updateDatabase();
+                },
                 maxLength: 26,
                 controller: controller.banerTextController,
                 decoration: const InputDecoration(
@@ -117,7 +122,8 @@ class SettingsViewer extends GetView<ScanController> {
                   itemBuilder: (context, index) {
                     return Obx(
                       () => InkWell(
-                        onTap: () => {controller.selectedIndex.value = index},
+                        onTap: () => {controller.selectedIndex.value = index,
+                          controller.updateDatabase()},
                         child: buildCard(index),
                       ),
                     );

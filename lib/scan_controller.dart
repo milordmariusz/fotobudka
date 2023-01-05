@@ -4,12 +4,21 @@ import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fotobudka/models/data.dart';
 import 'package:fotobudka/services/photo_service.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
+import 'package:drift/drift.dart' as d;
+
+import 'package:drift/native.dart';
+import 'data.dart';
+
+
+
+
 
 class ScanController extends GetxController {
   final TextEditingController banerTextController = TextEditingController();
@@ -28,9 +37,7 @@ class ScanController extends GetxController {
   var isTakingPhoto = false.obs;
 
   CameraController get cameraController => _cameraController;
-
   bool get isInitialized => _isInitialized.value;
-
   List<Uint8List> get imageList => _imageList;
 
   @override
@@ -63,8 +70,42 @@ class ScanController extends GetxController {
     });
   }
 
+
+  final db = Database(NativeDatabase.memory());
+  Future<void> initDatabase() async {
+    print('--------------------');
+    if((await db.select(db.settings).get()).length == 0){
+      await db.into(db.settings).insert(SettingsCompanion.insert(
+        banerText: banerTextController.text,
+        banerIndex: selectedIndex.value,
+        delayTime: delayTime.value,
+        photosNumber: photoNumber.value, ));
+        print('Default data loaded');
+    }
+    else{
+      banerTextController.text = (await db.select(db.settings).get())[0].banerText;
+      selectedIndex.value = (await db.select(db.settings).get())[0].banerIndex;
+      delayTime.value = (await db.select(db.settings).get())[0].delayTime;
+      photoNumber.value = (await db.select(db.settings).get())[0].photosNumber;
+      print('Data loaded from database');
+    }
+
+    print((await db.select(db.settings).get())[0]);
+    print('--------------------');
+  }
+
+  Future<void> updateDatabase() async {
+    db!.UpdateDatabase(SettingsCompanion(
+      banerText: d.Value(banerTextController.text),
+      banerIndex: d.Value(selectedIndex.value),
+      delayTime: d.Value(delayTime.value),
+      photosNumber: d.Value(photoNumber.value),));
+    print((await db.select(db.settings).get())[0]);
+  }
+
   @override
   void onInit() {
+    initDatabase();
     initCamera();
     super.onInit();
   }
