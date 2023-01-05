@@ -9,16 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fotobudka/models/data.dart';
 import 'package:fotobudka/services/photo_service.dart';
+import 'package:fotobudka/settings.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:drift/drift.dart' as d;
-
-import 'package:drift/native.dart';
-import 'data.dart';
-
-
-
-
+import 'package:flutter/material.dart';
 
 class ScanController extends GetxController {
   final TextEditingController banerTextController = TextEditingController();
@@ -31,13 +26,15 @@ class ScanController extends GetxController {
   CameraImage? _cameraImage;
   var currentPhotoNumber = 0;
   var photoNumber = 4.obs;
-  var delayTime = 5.obs;
+  var delayTime = 4.obs;
   var selectedIndex = 0.obs;
   var currentDelayTime = 0.obs;
   var isTakingPhoto = false.obs;
 
   CameraController get cameraController => _cameraController;
+
   bool get isInitialized => _isInitialized.value;
+
   List<Uint8List> get imageList => _imageList;
 
   @override
@@ -70,37 +67,40 @@ class ScanController extends GetxController {
     });
   }
 
+  Database? database;
 
-  final db = Database(NativeDatabase.memory());
   Future<void> initDatabase() async {
+    database = Database();
     print('--------------------');
-    if((await db.select(db.settings).get()).length == 0){
-      await db.into(db.settings).insert(SettingsCompanion.insert(
-        banerText: banerTextController.text,
-        banerIndex: selectedIndex.value,
-        delayTime: delayTime.value,
-        photosNumber: photoNumber.value, ));
-        print('Default data loaded');
-    }
-    else{
-      banerTextController.text = (await db.select(db.settings).get())[0].banerText;
-      selectedIndex.value = (await db.select(db.settings).get())[0].banerIndex;
-      delayTime.value = (await db.select(db.settings).get())[0].delayTime;
-      photoNumber.value = (await db.select(db.settings).get())[0].photosNumber;
-      print('Data loaded from database');
+    if ((await database?.getSettings())!.length == 0) {
+      await database?.saveSettings(SettingsCompanion.insert(
+        banerText: d.Value(banerTextController.text),
+        banerIndex: d.Value(selectedIndex.value),
+        delayTime: d.Value(delayTime.value),
+        photosNumber: d.Value(photoNumber.value),
+      ));
+      print('Default data loaded');
+    } else {
+      banerTextController.text =
+          (await database?.getSettings())![0]!.banerText!;
+      selectedIndex.value = (await database?.getSettings())![0]!.banerIndex!;
+      delayTime.value = (await database?.getSettings())![0]!.delayTime!;
+      photoNumber.value = (await database?.getSettings())![0]!.photosNumber!;
+      print('Data is loaded form database');
     }
 
-    print((await db.select(db.settings).get())[0]);
+    print((await database?.getSettings()));
     print('--------------------');
   }
 
   Future<void> updateDatabase() async {
-    db!.UpdateDatabase(SettingsCompanion(
+    database?.UpdateDatabase(SettingsCompanion(
       banerText: d.Value(banerTextController.text),
       banerIndex: d.Value(selectedIndex.value),
       delayTime: d.Value(delayTime.value),
-      photosNumber: d.Value(photoNumber.value),));
-    print((await db.select(db.settings).get())[0]);
+      photosNumber: d.Value(photoNumber.value),
+    ));
+    print((await database?.getSettings()));
   }
 
   @override
@@ -198,9 +198,9 @@ class ScanController extends GetxController {
     b = b.clamp(0, 255);
 
     return 0xff000000 |
-    ((b << 16) & 0xff0000) |
-    ((g << 8) & 0xff00) |
-    (r & 0xff);
+        ((b << 16) & 0xff0000) |
+        ((g << 8) & 0xff00) |
+        (r & 0xff);
   }
 
   Future<void> PlaySound(string) async {

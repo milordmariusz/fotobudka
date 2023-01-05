@@ -1,0 +1,7 @@
+CREATE TABLE settings (
+    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    banerText TEXT,
+    banerIndex INT,
+    delayTime INT,
+    photosNumber INT
+);

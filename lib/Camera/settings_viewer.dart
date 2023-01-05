@@ -122,8 +122,10 @@ class SettingsViewer extends GetView<ScanController> {
                   itemBuilder: (context, index) {
                     return Obx(
                       () => InkWell(
-                        onTap: () => {controller.selectedIndex.value = index,
-                          controller.updateDatabase()},
+                        onTap: () => {
+                          controller.selectedIndex.value = index,
+                          controller.updateDatabase()
+                        },
                         child: buildCard(index),
                       ),
                     );
