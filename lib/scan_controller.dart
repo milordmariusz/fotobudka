@@ -7,13 +7,13 @@ import 'package:camera/camera.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fotobudka/Camera/intro_first_page.dart';
 import 'package:fotobudka/models/data.dart';
 import 'package:fotobudka/services/photo_service.dart';
 import 'package:fotobudka/settings.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:drift/drift.dart' as d;
-import 'package:flutter/material.dart';
 
 class ScanController extends GetxController {
   final TextEditingController banerTextController = TextEditingController();
@@ -30,6 +30,8 @@ class ScanController extends GetxController {
   var selectedIndex = 0.obs;
   var currentDelayTime = 0.obs;
   var isTakingPhoto = false.obs;
+  var context;
+
 
   CameraController get cameraController => _cameraController;
 
@@ -79,6 +81,12 @@ class ScanController extends GetxController {
         delayTime: d.Value(delayTime.value),
         photosNumber: d.Value(photoNumber.value),
       ));
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return FirstIntroDialog();
+        },
+      );
       print('Default data loaded');
     } else {
       banerTextController.text =
@@ -88,7 +96,6 @@ class ScanController extends GetxController {
       photoNumber.value = (await database?.getSettings())![0]!.photosNumber!;
       print('Data is loaded form database');
     }
-
     print((await database?.getSettings()));
     print('--------------------');
   }
