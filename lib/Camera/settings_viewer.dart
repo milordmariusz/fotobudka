@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fotobudka/Camera/intro_first_page.dart';
 import 'package:fotobudka/scan_controller.dart';
 import 'package:get/get.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -22,6 +23,22 @@ class SettingsViewer extends GetView<ScanController> {
                   const Spacer(),
                   IconButton(
                     icon: const Icon(
+                      Icons.help,
+                      color: Colors.black,
+                      size: 35,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return FirstIntroDialog();
+                        },
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(
                       Icons.cancel,
                       color: Colors.black,
                       size: 35,
@@ -32,13 +49,13 @@ class SettingsViewer extends GetView<ScanController> {
                   ),
                 ],
               ),
-              Row(children: const <Widget>[SizedBox(height: 10)]),
+              Row(children: const <Widget>[SizedBox(height: 25)]),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text(
                     'Ilosc zdjęć',
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 20),
                   ),
                 ],
               ),
@@ -55,19 +72,19 @@ class SettingsViewer extends GetView<ScanController> {
                         controller.updateDatabase();
                       },
                       selectedTextStyle: const TextStyle(
-                          fontSize: 30, color: Colors.deepPurpleAccent),
+                          fontSize: 25, color: Colors.deepPurpleAccent),
                       axis: Axis.horizontal,
                     ),
                   ),
                 ],
               ),
-              Row(children: const <Widget>[SizedBox(height: 10)]),
+              Row(children: const <Widget>[SizedBox(height: 15)]),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text(
                     'Czas pomiędzy zdjęciami',
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 20),
                   ),
                 ],
               ),
@@ -83,18 +100,18 @@ class SettingsViewer extends GetView<ScanController> {
                           controller.updateDatabase();
                         },
                         selectedTextStyle: const TextStyle(
-                            fontSize: 30, color: Colors.deepPurpleAccent),
+                            fontSize: 25, color: Colors.deepPurpleAccent),
                         axis: Axis.horizontal,
                       )),
                 ],
               ),
-              Row(children: const <Widget>[SizedBox(height: 10)]),
+              Row(children: const <Widget>[SizedBox(height: 15)]),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text(
                     'Baner',
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 20),
                   ),
                 ],
               ),
