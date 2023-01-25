@@ -153,7 +153,7 @@ class ScanController extends GetxController {
         CompleteBanner completeBanner = await _prepareDataToSend();
         data = Data(
           _formatedDateTimeNow,
-          null,
+          base64Encode(photo),
           completeBanner.banner,
           completeBanner.text,
         );
@@ -260,7 +260,7 @@ class ScanController extends GetxController {
 
   Future<void> PlaySound(string) async {
     String audioasset = string;
-    ByteData bytes = await rootBundle.load(audioasset); //load sound from assets
+    ByteData bytes = await rootBundle.load(audioasset);
     Uint8List soundbytes =
         bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
     int result = await player.playBytes(soundbytes);
