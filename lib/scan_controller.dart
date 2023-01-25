@@ -8,12 +8,14 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fotobudka/Camera/intro_first_page.dart';
+import 'package:fotobudka/models/complete_banner.dart';
 import 'package:fotobudka/models/data.dart';
 import 'package:fotobudka/services/photo_service.dart';
 import 'package:fotobudka/settings.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:drift/drift.dart' as d;
+import 'package:intl/intl.dart';
 
 class ScanController extends GetxController {
   final TextEditingController banerTextController = TextEditingController();
@@ -31,7 +33,7 @@ class ScanController extends GetxController {
   var currentDelayTime = 0.obs;
   var isTakingPhoto = false.obs;
   var context;
-
+  late String _formatedDateTimeNow = "";
 
   CameraController get cameraController => _cameraController;
 
@@ -73,7 +75,6 @@ class ScanController extends GetxController {
 
   Future<void> initDatabase() async {
     database = Database();
-    print('--------------------');
     if ((await database?.getSettings())!.length == 0) {
       await database?.saveSettings(SettingsCompanion.insert(
         banerText: d.Value(banerTextController.text),
@@ -87,17 +88,13 @@ class ScanController extends GetxController {
           return FirstIntroDialog();
         },
       );
-      print('Default data loaded');
     } else {
       banerTextController.text =
           (await database?.getSettings())![0]!.banerText!;
       selectedIndex.value = (await database?.getSettings())![0]!.banerIndex!;
       delayTime.value = (await database?.getSettings())![0]!.delayTime!;
       photoNumber.value = (await database?.getSettings())![0]!.photosNumber!;
-      print('Data is loaded form database');
     }
-    print((await database?.getSettings()));
-    print('--------------------');
   }
 
   Future<void> updateDatabase() async {
@@ -107,7 +104,6 @@ class ScanController extends GetxController {
       delayTime: d.Value(delayTime.value),
       photosNumber: d.Value(photoNumber.value),
     ));
-    print((await database?.getSettings()));
   }
 
   @override
@@ -122,6 +118,7 @@ class ScanController extends GetxController {
       _imageList.clear();
       _imageList.refresh();
       currentPhotoNumber = photoNumber.value;
+      _formatedDateTimeNow = getCurrentTime();
       captureFirstStage();
     }
   }
@@ -130,40 +127,91 @@ class ScanController extends GetxController {
     currentDelayTime.value = delayTime.value;
     isTakingPhoto.value = true;
     captureSecondStage();
-    // PlaySound('assets/pop.mp3');
+    PlaySound('assets/pop.mp3');
+  }
+
+  String getCurrentTime() {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyyMMddHHmmss');
+    return formatter.format(now);
   }
 
   void captureSecondStage() {
-    Timer(Duration(seconds: 1), () {
-      if (currentDelayTime.value != 0) {
-        // PlaySound('assets/pop.mp3');
-        captureSecondStage();
-        currentDelayTime.value -= 1;
-      } else {
-        img.Image image = convertYUV420ToImage(_cameraImage);
-        Uint8List list = Uint8List.fromList(img.encodeJpg(image));
-        _imageList.add(list);
-
-        var data = Data(base64Encode(list), null, null);
-        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        print(data.toString());
-        print(data.photo);
-        _photoService.sendPhoto(data);
-        _imageList.refresh();
-        currentPhotoNumber -= 1;
-        if (currentPhotoNumber > 0) {
-          // PlaySound('assets/longpop.wav');
-          Timer(Duration(seconds: 1), () {
-            //ZROBIENIE 1 ZDJECIA
-            captureFirstStage();
-          });
-        } else {
-          //KONIEC WSZYSTKICH ZDJEC
-          isTakingPhoto.value = false;
-          // PlaySound('assets/finishpop.wav');
-        }
+    Timer(const Duration(seconds: 1), () async {
+      if (_isDelay()) {
+        _playDelaySound();
+        return;
       }
+
+      Uint8List photo = _getCurrentPhoto();
+
+      late Data data;
+      if (!_isLastPhoto()) {
+        _takePhoto();
+        data = Data(_formatedDateTimeNow, base64Encode(photo), null, null);
+      } else {
+        CompleteBanner completeBanner = await _prepareDataToSend();
+        data = Data(
+          _formatedDateTimeNow,
+          null,
+          completeBanner.banner,
+          completeBanner.text,
+        );
+      }
+
+      await _photoService.sendPhoto(data);
     });
+  }
+
+  bool _isDelay() {
+    return currentDelayTime.value != 0;
+  }
+
+  void _playDelaySound() {
+    PlaySound('assets/pop.mp3');
+    currentDelayTime.value -= 1;
+    captureSecondStage();
+  }
+
+  Uint8List _getCurrentPhoto() {
+    img.Image image = convertYUV420ToImage(_cameraImage);
+    Uint8List photo = Uint8List.fromList(img.encodeJpg(image));
+    _updateImageList(photo);
+    return photo;
+  }
+
+  void _updateImageList(photo) {
+    _imageList.add(photo);
+    _imageList.refresh();
+    currentPhotoNumber -= 1;
+  }
+
+  bool _isLastPhoto() {
+    return currentPhotoNumber <= 0;
+  }
+
+  void _takePhoto() {
+    PlaySound('assets/longpop.wav');
+    Timer(const Duration(seconds: 1), () {
+      captureFirstStage();
+    });
+  }
+
+  Future<CompleteBanner> _prepareDataToSend() async {
+    isTakingPhoto.value = false;
+    PlaySound('assets/finishpop.wav');
+    return _getCompleteBanner();
+  }
+
+  Future<CompleteBanner> _getCompleteBanner() async {
+    return CompleteBanner(await _getBannerBase64(), banerTextController.text);
+  }
+
+  Future<String> _getBannerBase64() async {
+    ByteData bytes = await rootBundle.load('assets/baner$selectedIndex.jpg');
+    var buffer = bytes.buffer;
+    var encodedBanner = base64.encode(Uint8List.view(buffer));
+    return encodedBanner;
   }
 
   static img.Image convertYUV420ToImage(CameraImage? cameraImage) {
